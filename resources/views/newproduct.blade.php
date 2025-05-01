@@ -61,18 +61,18 @@
         <form action="{{ route('button') }}" method="post" enctype="multipart/form-data">
         @csrf   
             <div>
-                <label for="product-name">商品名<span class="required">*</span></label>
-                <input type="text" id="product-name" name="product_name" value="{{ old('product-name') }}" required>
-                @if($errors->has('product-name'))
-                        <p>{{ $errors->first('product-name') }}</p>
+                <label for="product_name">商品名<span class="required">*</span></label>
+                <input type="text" id="product_name" name="product_name" value="{{ old('product_name') }}" required>
+                @if($errors->has('product_name'))
+                        <p>{{ $errors->first('product_name') }}</p>
                     @endif
             </div>
 
             <div>
-                <label for="manufacturer-name">メーカー名<span class="required">*</span></label>
-                <input type="text" id="manufacturer-name" name="manufacturer_name" value="{{ old('manufacturer-name') }}" required>
-                @if($errors->has('manufacturer-name'))
-                        <p>{{ $errors->first('manufacturer-name') }}</p>
+                <label for="company_name">メーカー名<span class="required">*</span></label>
+                <input type="text" id="company_name" name="company_name" value="{{ old('company_name') }}" required>
+                @if($errors->has('company_name'))
+                        <p>{{ $errors->first('company_name') }}</p>
                     @endif
             </div>
 
@@ -98,15 +98,15 @@
                     @endif
             </div>
             <div>
-                <label for="product-image">商品画像</label>
-                <input type="file" id="product-image" name="product_image" value="{{ old('product-image') }}">
-                @if($errors->has('product-image'))
-                        <p>{{ $errors->first('product-image') }}</p>
+                <label for="img_path">商品画像</label>
+                <input type="file" id="img_path" name="img_path" value="{{ old('img_path') }}">
+                @if($errors->has('img_path'))
+                        <p>{{ $errors->first('img_path') }}</p>
                     @endif
             </div>
 
             <div>
-                <button type="button" onclick="location.href='http://localhost:80/practice2/public/productinfo'">新規登録</button>
+                <button type="submit" onclick="location.href='http://localhost:80/practice2/public/productinfo'">新規登録</button>
                 <a href="javascript:history.back();">
                     <button type="button" class="back-btn">戻る</button>
                 </a>

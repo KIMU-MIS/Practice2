@@ -98,11 +98,12 @@
     <!-- 検索フォーム -->
     <h2>商品一覧画面</h2> 
     <div class="search-container">
+    
         <div>
-            <input type="text" id="searchKeyword" placeholder="検索キーワード" />
+            <input type="text" id="searchKeyword" name="keyword" placeholder="検索キーワード" />
         </div>
         <div>
-            <select id="manufacturerSelect">
+            <select name="company">
                 <option value="">メーカー名を選択</option>
                 <option value="メーカー1">メーカー1</option>
                 <option value="メーカー2">メーカー2</option>
@@ -111,8 +112,9 @@
             </select>
         </div>
         <div>
-            <button type="button" id="searchBtn">検索</button>
+            <button type="submit" id="searchBtn">検索</button>
         </div>
+    
     </div>
 
     <!-- 商品一覧表 -->
@@ -134,11 +136,11 @@
                 @foreach ($products as $product)
                 <tr>
                     <td>{{ $product->id }}</td>
-                    <td><img src="https://via.placeholder.com/50" alt="商品画像" /></td>
-                    <td>{{ $product->product-name }}</td>
+                    <td><img src="{{ asset('storage/' . $product->img_path) }}" alt="商品画像" /></td>
+                    <td>{{ $product->product_name }}</td>
                     <td>{{ $product->price }}</td>
                     <td>{{ $product->stock }}</td>
-                    <td>{{ $product->manufacturer-name }}</td>
+                    <td>{{ $product->company_name }}</td>
                     <td>
                         <div class="button-container">
                             <button class="detail-btn" onclick="location.href='http://localhost:80/practice2/public/productdetail'">詳細</button>

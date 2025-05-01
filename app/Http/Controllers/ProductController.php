@@ -9,9 +9,9 @@ use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
-    public function showList() {
-        return view('list');
-    }
+    //public function showList() {
+        //return view('list');
+    //}
 
     public function showRegistForm() {
         return view('regist');
@@ -19,22 +19,24 @@ class ProductController extends Controller
     }
 
     public function showProductInfo() {
-        // インスタンス生成
+        //商品一覧画面
         $model = new Product();
         $products = $model->getList();
         return view('productinfo', ['products' => $products]);
     }
 
     public function showEditForm() {
+        //商品新規登録画面
         return view('newproduct');
     }
     public function showProductInfo2() {
-        // インスタンス生成
+        // 商品情報詳細画面
         $model = new Product();
         $products = $model->getList();
         return view('productdetail', ['products' => $products]);
     }
     public function showEditForm2() {
+        // 商品情報編集画面
         return view('infoediting');
     }
 
@@ -47,7 +49,7 @@ class ProductController extends Controller
         try {
             // 登録処理呼び出し
             $model = new Product();
-            $model->registProduct($request);
+            $model->newproductProduct($request);
             DB::commit();
         } catch (\Exception $e) {
             DB::rollback();
@@ -55,6 +57,8 @@ class ProductController extends Controller
         }
     
         // 処理が完了したらregistにリダイレクト
-        return redirect(route('regist'));
+        return redirect(route('newproduct'));
     }
+
+   
 }
