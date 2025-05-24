@@ -1,15 +1,10 @@
-<!DOCTYPE html>
+
 @extends('layouts.app')
 
 @section('title', '商品情報編集画面')
 
 @section('content')
-
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>商品情報編集画面</title>
+       
     <style>
         /* 赤色の*マーク */
         .required {
@@ -54,44 +49,71 @@
             background-color:rgb(35, 211, 255);
         }
     </style>
-</head>
-<body>
+
+
     <div class="form-container">
         <h2>商品情報編集画面</h2>
-        <form action="register_complete.php" method="post" enctype="multipart/form-data">
-            <div>
+        <form action="{{ route('product.update', $product->id) }}" method="post" enctype="multipart/form-data">
+        @csrf
+        @method('PUT')
+           <div>
                 <label for="id">ID:</label>
-                <input type="text" id="id" name="id" value="12345" disabled>
+                <input type="hidden" name="id" value="{{ $product->id }}">
+                @if($errors->has('id'))
+                        <p>{{ $errors->first('id') }}</p>
+                    @endif
             </div>
             <div>
                 <label for="product-name">商品名<span class="required">*</span></label>
-                <input type="text" id="product-name" name="product_name" required>
+                <input type="text" id="product-name" name="product_name" value="{{ old('product_name', $product->product_name) }}" required>
+                @if($errors->has('product_name'))
+                        <p>{{ $errors->first('product_name') }}</p>
+                    @endif
             </div>
 
             <div>
-                <label for="manufacturer-name">メーカー名<span class="required">*</span></label>
-                <input type="text" id="manufacturer-name" name="manufacturer_name" required>
-            </div>
+               <label for="company_id">メーカー名<span class="required">*</span></label>
+               <select id="company_id" name="company_id" required>
+                @foreach ($companies as $company)
+               <option value="{{ $company->id }}"
+                 {{ old('company_id', $product->company_id) == $company->id ? 'selected' : '' }}>
+                   {{ $company->company_name }}
+                </option>
+                @endforeach
+               </select>
+                </div>
 
             <div>
                 <label for="price">価格<span class="required">*</span></label>
-                <input type="number" id="price" name="price" required>
+                <input type="number" id="price" name="price" value="{{ old('price', $product->price) }}" required>
+                @if($errors->has('price'))
+                        <p>{{ $errors->first('price') }}</p>
+                    @endif
             </div>
             <div>
                 <label for="stock">在庫数<span class="required">*</span></label>
-                <input type="number" id="stock" name="stock" required>
+                <input type="number" id="stock" name="stock" value="{{ old('stock', $product->stock) }}" required>
+                @if($errors->has('stock'))
+                        <p>{{ $errors->first('stock') }}</p>
+                    @endif
             </div>
             <div>
                 <label for="comment">コメント</label>
-                <textarea id="comment" name="comment" rows="4"></textarea>
+                <textarea id="comment" name="comment" rows="4">{{ old('comment', $product->comment) }}</textarea>
+                @if($errors->has('comment'))
+                        <p>{{ $errors->first('comment') }}</p>
+                    @endif
             </div>
             <div>
-                <label for="product-image">商品画像</label>
-                <input type="file" id="product-image" name="product_image">
+                <label for="img_path">商品画像</label>
+                <input type="file" id="img_path" name="img_path">
+                @if($errors->has('img_path'))
+                        <p>{{ $errors->first('img_path') }}</p>
+                    @endif
             </div>
 
             <div>
-                <button type="submit" onclick="location.href='http://localhost:80/practice2/public/productdetail'">更新</button>
+                <button type="submit">更新</button>
                 <a href="javascript:history.back();">
                     <button type="button" class="back-btn">戻る</button>
                 </a>
@@ -99,7 +121,4 @@
         </form>
     </div>
 
-@csrf
-</body>
-</html>
 @endsection

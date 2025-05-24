@@ -1,15 +1,8 @@
-<!DOCTYPE html>
+
 @extends('layouts.app')
-
-@section('title', '商品情報一覧画面')
-
+@section('title', '商品情報詳細画面')
 @section('content')
 
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>商品情報詳細画面</title>
     <style>
         /* フォームのスタイル */
         .detail-container {
@@ -21,7 +14,7 @@
             background-color: #f9f9f9;
         }
         .detail-container h2 {
-            //text-align: center;
+           /* text-align: center; */
         }
         .detail-container dl {
             margin-bottom: 20px;
@@ -58,46 +51,53 @@
             background-color:rgb(35, 211, 255);
         }
     </style>
-</head>
-<body>
+
+
     <div class="detail-container">
         <h2>商品情報詳細画面</h2>
         
-        <dl>
-            <dt>ID:</dt>
-            <dd>12345</dd> <!-- 商品IDをここに表示 -->
+        <table>
+          <tr><th>ID:</th>
+          <td>{{ $product->id }}</td></tr> <!-- 商品IDをここに表示 -->
 
-            <dt>商品画像:</dt>
-            <dd><img src="product-image.jpg" alt="商品画像"></dd> <!-- 商品画像のリンクをここに指定 -->
+          <tr><th>商品画像:</th>
+            <td> @if (!empty($product->img_path))
+            <img src="{{ asset('storage/' . $product->img_path) }}" width="100"> <!-- 商品画像のリンクをここに指定 -->
+             @else
+              <span>画像なし</span>
+             @endif
+            </td></tr>
 
-            <dt>商品名:</dt>
-            <dd>商品名例</dd> <!-- 商品名をここに表示 -->
+          <tr><th>商品名:</th>
+          <td>{{ $product->product_name }}</td></tr> <!-- 商品名をここに表示 -->
 
-            <dt>メーカー:</dt>
-            <dd>メーカー名例</dd> <!-- メーカー名をここに表示 -->
+          <tr><th>メーカー:</th>
+          <td>{{ $product->company_name }}</td></tr> <!-- メーカー名をここに表示 -->
 
-            <dt>価格:</dt>
-            <dd>¥1000</dd> <!-- 価格をここに表示 -->
+          <tr><th>価格:</th>
+          <td>{{ $product->price }}</td></tr> <!-- 価格をここに表示 -->
 
-            <dt>在庫数:</dt>
-            <dd>50</dd> <!-- 在庫数をここに表示 -->
+          <tr><th>在庫数:</th>
+          <td>{{ $product->stock }}</td></tr> <!-- 在庫数をここに表示 -->
 
-            <dt>コメント:</dt>
-            <dd>商品の詳細コメントがここに表示されます。</dd> <!-- コメントをここに表示 -->
-        </dl>
+          <tr><th>コメント:</th>
+          <td>{{ $product->comment }}</td></tr> <!-- コメントをここに表示 -->
+            
+        </table>
 
         <div class="button-container">
     
-                <button type="button" onclick="location.href='http://localhost:80/practice2/public/infoediting'">編集</button> <!-- 編集ページへのリンク -->
-           
+            <a href="{{ route('infoediting', $product->id) }}">
+              <button type="button">編集</button> <!-- 編集ページへのリンク -->
+            </a>
             
-            <a href="javascript:history.back();">
-                <button type="button" class="back-btn">戻る</button> <!-- 戻るボタン -->
+            <a href="{{ route('productinfo') }}">
+                <button type="button" >戻る</button> <!-- 戻るボタン -->
             </a>
         </div>
     </div>
 
-@csrf
-</body>
-</html>
+
+
+
 @endsection

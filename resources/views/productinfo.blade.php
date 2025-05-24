@@ -1,15 +1,12 @@
-<!DOCTYPE html>
+
 @extends('layouts.app')
 
 @section('title', '商品情報一覧画面')
 
 @section('content')
-<<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>商品情報一覧</title>
+
+
+   
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -90,8 +87,7 @@
             color: white;
         }
     </style>
-</head>
-<body>
+
 
 <div class="container">
 
@@ -103,7 +99,7 @@
             <input type="text" id="searchKeyword" name="keyword" placeholder="検索キーワード" />
         </div>
         <div>
-            <select name="company">
+            <select name="company" id="manufacturerSelect">
                 <option value="">メーカー名を選択</option>
                 <option value="メーカー1">メーカー1</option>
                 <option value="メーカー2">メーカー2</option>
@@ -128,7 +124,7 @@
                     <th>価格</th>
                     <th>在庫数</th>
                     <th>メーカー名</th>
-                    <th><button class="new-btn" onclick="location.href='http://localhost:80/practice2/public/newproduct'">新規登録</button></th>
+                    <th><button class="new-btn" onclick="location.href='{{ url('newproduct') }}'">新規登録</button></th>
                 </tr>
             </thead>
             <tbody>
@@ -136,17 +132,24 @@
                 @foreach ($products as $product)
                 <tr>
                     <td>{{ $product->id }}</td>
-                    <td><img src="{{ asset('storage/' . $product->img_path) }}" alt="商品画像" /></td>
+                    <td><img src="{{ asset('storage/' . $product->img_path) }}" alt="商品画像" width="80" height="80" /></td>
                     <td>{{ $product->product_name }}</td>
                     <td>{{ $product->price }}</td>
                     <td>{{ $product->stock }}</td>
                     <td>{{ $product->company_name }}</td>
                     <td>
-                        <div class="button-container">
-                            <button class="detail-btn" onclick="location.href='http://localhost:80/practice2/public/productdetail'">詳細</button>
-                            <button class="delete-btn">削除</button>
+                      <div class="button-container">
+                         <a href="{{ route('product.show', $product->id) }}">
+                          <button class="register-btn">詳細</button>
+                         </a>
+        
+                              <form action="{{ route('product.destroy', $product->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('本当に削除しますか？');">
+                               @csrf
+                               @method('DELETE')
+                              <button type="submit" class="delete-btn">削除</button>
+                              </form>
                         </div>
-                    </td>
+                     </td>
                 </tr>
                 @endforeach
                
@@ -169,17 +172,8 @@
         // 例：商品をフィルタリングして表示
     });
 
-    // 削除ボタンの処理
-    document.querySelectorAll('.delete-btn').forEach(function(button) {
-        button.addEventListener('click', function() {
-            if (confirm('本当に削除してもよろしいですか？')) {
-                // 実際の削除処理をここに実装する
-                alert('商品が削除されました');
-            }
-        });
-    });
+    
 </script>
-@csrf
-</body>
-</html>
+
+
 @endsection

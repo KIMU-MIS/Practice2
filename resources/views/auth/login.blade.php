@@ -90,10 +90,10 @@
 
                         <div class="row mb-0">
                             <div class="col-md-8 offset-md-4">
-                                <button type="button" class="register-btn" onclick="location.href='http://localhost:80/practice2/public/regist'">
+                                <button type="button" class="register-btn" onclick="location.href='{{ url('register') }}'">
                                     新規登録
                                 </button>
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn btn-primary" onclick="location.href='{{ url('productinfo') }}'">
                                     {{ __('ログイン') }}
                                 </button>
 

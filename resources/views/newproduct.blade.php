@@ -1,15 +1,15 @@
-<!DOCTYPE html>
+
 @extends('layouts.app')
 
 @section('title', '商品新規登録画面')
 
 @section('content')
 
-<html lang="ja">
-<head>
+
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>商品新規登録画面</title>
+    
     <style>
         /* 赤色の*マーク */
         .required {
@@ -54,12 +54,23 @@
             background-color:rgb(35, 211, 255);
         }
     </style>
-</head>
-<body>
+
+
     <div class="form-container">
         <h2>商品新規登録画面</h2>
         <form action="{{ route('button') }}" method="post" enctype="multipart/form-data">
-        @csrf   
+        @csrf  
+        
+        @if ($errors->any())
+            <div class="alert alert-danger">
+              <ul>
+                 @foreach ($errors->all() as $error)
+                 <li>{{ $error }}</li>
+                @endforeach
+              </ul>
+            </div>
+        @endif
+
             <div>
                 <label for="product_name">商品名<span class="required">*</span></label>
                 <input type="text" id="product_name" name="product_name" value="{{ old('product_name') }}" required>
@@ -69,11 +80,18 @@
             </div>
 
             <div>
-                <label for="company_name">メーカー名<span class="required">*</span></label>
-                <input type="text" id="company_name" name="company_name" value="{{ old('company_name') }}" required>
-                @if($errors->has('company_name'))
-                        <p>{{ $errors->first('company_name') }}</p>
-                    @endif
+            <label for="company_name">メーカー名<span class="required">*</span></label>
+              <select id="company_id" name="company_id" required>
+                 <option value="">-- メーカーを選択 --</option>
+                   @foreach ($companies as $company)
+                    <option value="{{ $company->id }}" {{ old('company_id') == $company->id ? 'selected' : '' }}>
+                     {{ $company->company_name }}
+                 </option>
+                  @endforeach
+                </select>
+                   @if ($errors->has('company_id'))
+                   <p>{{ $errors->first('company_id') }}</p>
+                   @endif
             </div>
 
             <div>
@@ -99,21 +117,20 @@
             </div>
             <div>
                 <label for="img_path">商品画像</label>
-                <input type="file" id="img_path" name="img_path" value="{{ old('img_path') }}">
+                <input type="file" id="img_path" name="img_path" >
                 @if($errors->has('img_path'))
                         <p>{{ $errors->first('img_path') }}</p>
                     @endif
             </div>
 
             <div>
-                <button type="submit" onclick="location.href='http://localhost:80/practice2/public/productinfo'">新規登録</button>
-                <a href="javascript:history.back();">
-                    <button type="button" class="back-btn">戻る</button>
-                </a>
+                <button type="submit" >新規登録</button>
+                
+                <button type="button" class="back-btn" onclick="history.back()">戻る</button>
+                
             </div>
         </form>
     </div>
 
-</body>
-</html>
+
 @endsection
