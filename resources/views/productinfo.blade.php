@@ -22,6 +22,7 @@
             display: flex;
             justify-content: space-between;
             margin-bottom: 20px;
+            
         }
         .search-container input,
         .search-container select,
@@ -31,6 +32,13 @@
             margin: 5px;
             border-radius: 4px;
             border: 1px solid #ccc;
+           
+        }
+         .search-container .input,
+        .search-container .select,
+        .search-container .button {
+        float: left;
+
         }
         .table-container {
             margin-top: 20px;
@@ -95,21 +103,26 @@
     <h2>商品一覧画面</h2> 
     <div class="search-container">
     
-        <div>
-            <input type="text" id="searchKeyword" name="keyword" placeholder="検索キーワード" />
+    <form action="{{ route('product.index') }}" method="GET">
+       <div class="input">
+        <input type="text" id="keyword" name="keyword" value="{{ request('keyword') }}" placeholder="検索キーワード">
+       </div>
+
+       <div class="select">
+          <select name="company_id" id="company_id">
+             <option value="">-- メーカー名 --</option>
+             @foreach($companies as $company)
+                <option value="{{ $company->id }}" {{ request('company_id') == $company->id ? 'selected' : '' }}>
+                    {{ $company->company_name }}
+                </option>
+             @endforeach
+           </select>
         </div>
-        <div>
-            <select name="company" id="manufacturerSelect">
-                <option value="">メーカー名を選択</option>
-                <option value="メーカー1">メーカー1</option>
-                <option value="メーカー2">メーカー2</option>
-                <option value="メーカー3">メーカー3</option>
-                <!-- 他のメーカーを追加 -->
-            </select>
+
+        <div class="button">
+          <button type="submit">検索</button>
         </div>
-        <div>
-            <button type="submit" id="searchBtn">検索</button>
-        </div>
+    </form>
     
     </div>
 

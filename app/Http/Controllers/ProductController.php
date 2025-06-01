@@ -15,10 +15,10 @@ class ProductController extends Controller
         //return view('list');
     //}
 
-    public function showRegistForm() {
-        return view('regist');
+    //public function showRegistForm() {
+        //return view('regist');
         
-    }
+    //}
 
     public function showProductInfo() {
         //商品一覧画面
@@ -134,45 +134,27 @@ public function update(Request $request, $id)
                      ->with('success', '商品情報を更新しました');
 }
 
+public function index(Request $request)
+{
+    $products = Product::searchProducts($request->all());
+    $companies = Company::all();
+
+    return view('productinfo', compact('products', 'companies'));
+}
+
+
 public function edit($id)//（商品編集画面の表示用）
 {
    // joinして、products と companies を結合して取得
-    $product = DB::table('products')
-        ->join('companies', 'products.company_id', '=', 'companies.id')
-        ->select(
-            'products.id',
-            'products.product_name',
-            'products.price',
-            'products.stock',
-            'products.comment',
-            'products.img_path',
-            'products.company_id', // 編集時の初期選択用に必要
-            'companies.company_name'
-        )
-        ->where('products.id', $id)
-        ->first(); // findOrFail の代わりに first を使用
-    $companies = Company::all(); // Companyモデルを使って全件取得
+    $product = Product::withCompanyById($id);
+    $companies = Company::all();
 
     return view('edit', compact('product', 'companies'));
 }
 
 public function showDetail($id)//（商品詳細画面の表示）
 {
-    $product = DB::table('products')
-        ->join('companies', 'products.company_id', '=', 'companies.id')
-        ->select(
-            'products.id',
-            'products.product_name',
-            'products.price',
-            'products.stock',
-            'products.comment',
-            'products.img_path',
-            'companies.company_name'
-        )
-        ->where('products.id', $id)
-        ->first();
-
-   
+     $product = Product::withCompanyById($id);
     return view('productdetail', compact('product'));
 }
 

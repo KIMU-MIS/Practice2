@@ -23,6 +23,7 @@ Auth::routes();
 Route::get('/list', [App\Http\Controllers\ProductController::class, 'showList'])->name('list');
 Route::get('/regist',[App\Http\Controllers\ProductController::class, 'showRegistForm'])->name('regist');
 Route::get('/productinfo',[App\Http\Controllers\ProductController::class, 'showProductInfo'])->name('productinfo');
+Route::get('/productinfo', [ProductController::class, 'index'])->name('product.index');
 Route::get('/newproduct',[App\Http\Controllers\ProductController::class, 'showEditForm'])->name('newproduct');
 Route::get('/productdetail',[App\Http\Controllers\ProductController::class, 'showProductListDetail'])->name('productdetail');
 Route::get('/infoediting/{id}',[App\Http\Controllers\ProductController::class, 'showEditForm2'])->name('infoediting');

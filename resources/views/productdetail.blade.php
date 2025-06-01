@@ -91,7 +91,7 @@
               <button type="button">編集</button> <!-- 編集ページへのリンク -->
             </a>
             
-            <a href="{{ route('productinfo') }}">
+            <a href="{{ route('product.index') }}">
                 <button type="button" >戻る</button> <!-- 戻るボタン -->
             </a>
         </div>

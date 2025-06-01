@@ -93,7 +93,7 @@
                                 <button type="button" class="register-btn" onclick="location.href='{{ url('register') }}'">
                                     新規登録
                                 </button>
-                                <button type="submit" class="btn btn-primary" onclick="location.href='{{ url('productinfo') }}'">
+                                <button type="submit" class="btn btn-primary" >
                                     {{ __('ログイン') }}
                                 </button>
 
