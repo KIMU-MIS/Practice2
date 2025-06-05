@@ -98,7 +98,18 @@
 
 
 <div class="container">
+    <!-- 登録可否メッセージ -->
+   @if (session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
 
+    @if (session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
     <!-- 検索フォーム -->
     <h2>商品一覧画面</h2> 
     <div class="search-container">
@@ -137,7 +148,7 @@
                     <th>価格</th>
                     <th>在庫数</th>
                     <th>メーカー名</th>
-                    <th><button class="new-btn" onclick="location.href='{{ url('newproduct') }}'">新規登録</button></th>
+                    <th><button class="new-btn" onclick="location.href='{{route('product.create') }}'">新規登録</button></th>
                 </tr>
             </thead>
             <tbody>

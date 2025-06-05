@@ -38,7 +38,10 @@ class ProductRequest extends FormRequest
     protected function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(
-            response()->json($validator->errors(), 422)
+            redirect()
+                ->back()
+                ->withErrors($validator)
+                ->withInput()
         );
     }
 
@@ -67,4 +70,5 @@ public function messages() {
         'comment.max' => ':attributeは:max字以内で入力してください。',
     ];
 }
+
 }

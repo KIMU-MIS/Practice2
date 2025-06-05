@@ -53,6 +53,11 @@
         .form-container .back-btn:hover {
             background-color:rgb(35, 211, 255);
         }
+         .error {
+        color: red;
+        font-size: 0.9em;
+        margin-top: 4px;
+    }
     </style>
 
 
@@ -61,27 +66,17 @@
         <form action="{{ route('button') }}" method="post" enctype="multipart/form-data">
         @csrf  
         
-        @if ($errors->any())
-            <div class="alert alert-danger">
-              <ul>
-                 @foreach ($errors->all() as $error)
-                 <li>{{ $error }}</li>
-                @endforeach
-              </ul>
-            </div>
-        @endif
-
             <div>
                 <label for="product_name">商品名<span class="required">*</span></label>
-                <input type="text" id="product_name" name="product_name" value="{{ old('product_name') }}" required>
-                @if($errors->has('product_name'))
-                        <p>{{ $errors->first('product_name') }}</p>
-                    @endif
+                <input type="text" id="product_name" name="product_name" value="{{ old('product_name') }}" >
+               @error('product_name')
+                  <p class="error">{{ $message }}</p>
+               @enderror
             </div>
 
             <div>
             <label for="company_name">メーカー名<span class="required">*</span></label>
-              <select id="company_id" name="company_id" required>
+              <select id="company_id" name="company_id" >
                  <option value="">-- メーカーを選択 --</option>
                    @foreach ($companies as $company)
                     <option value="{{ $company->id }}" {{ old('company_id') == $company->id ? 'selected' : '' }}>
@@ -89,25 +84,27 @@
                  </option>
                   @endforeach
                 </select>
-                   @if ($errors->has('company_id'))
-                   <p>{{ $errors->first('company_id') }}</p>
-                   @endif
+                  @error('company_id') 
+                   <p class="error">{{ $message }}</p> 
+                  @enderror
             </div>
 
             <div>
                 <label for="price">価格<span class="required">*</span></label>
-                <input type="number" id="price" name="price" value="{{ old('price') }}" required>
-                @if($errors->has('price'))
-                        <p>{{ $errors->first('price') }}</p>
-                    @endif       
+                <input type="number" id="price" name="price" value="{{ old('price') }}" >
+                @error('price') 
+                   <p class="error">{{ $message }}</p> 
+                @enderror      
             </div>
+
             <div>
                 <label for="stock">在庫数<span class="required">*</span></label>
-                <input type="number" id="stock" name="stock" value="{{ old('stock') }}" required>
-                @if($errors->has('stock'))
-                        <p>{{ $errors->first('stock') }}</p>
-                    @endif
+                <input type="number" id="stock" name="stock" value="{{ old('stock') }}" >
+                @error('stock') 
+                 <p class="error">{{ $message }}</p>
+                 @enderror
             </div>
+
             <div>
                 <label for="comment">コメント</label>
                 <textarea id="comment" name="comment" rows="4">{{ old('comment') }}</textarea>
@@ -125,9 +122,9 @@
 
             <div>
                 <button type="submit" >新規登録</button>
-                
-                <button type="button" class="back-btn" onclick="history.back()">戻る</button>
-                
+             <a href="{{ route('product.index') }}">   
+                <button type="button" class="back-btn" >戻る</button>
+             </a>   
             </div>
         </form>
     </div>

@@ -87,7 +87,7 @@
 
         <div class="button-container">
     
-            <a href="{{ route('infoediting', $product->id) }}">
+            <a href="{{ route('product.edit', $product->id) }}">
               <button type="button">編集</button> <!-- 編集ページへのリンク -->
             </a>
             

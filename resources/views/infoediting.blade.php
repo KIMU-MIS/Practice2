@@ -48,6 +48,11 @@
         .form-container .back-btn:hover {
             background-color:rgb(35, 211, 255);
         }
+          .error {
+        color: red;
+        font-size: 0.9em;
+        margin-top: 4px;
+    }
     </style>
 
 
@@ -65,15 +70,15 @@
             </div>
             <div>
                 <label for="product-name">商品名<span class="required">*</span></label>
-                <input type="text" id="product-name" name="product_name" value="{{ old('product_name', $product->product_name) }}" required>
-                @if($errors->has('product_name'))
-                        <p>{{ $errors->first('product_name') }}</p>
-                    @endif
+                <input type="text" id="product-name" name="product_name" value="{{ old('product_name', $product->product_name) }}" >
+                 @error('product_name')
+                   <p class="error">{{ $message }}</p>
+                 @enderror
             </div>
 
             <div>
                <label for="company_id">メーカー名<span class="required">*</span></label>
-               <select id="company_id" name="company_id" required>
+               <select id="company_id" name="company_id" >
                 @foreach ($companies as $company)
                <option value="{{ $company->id }}"
                  {{ old('company_id', $product->company_id) == $company->id ? 'selected' : '' }}>
@@ -81,21 +86,24 @@
                 </option>
                 @endforeach
                </select>
+               @error('company_id') 
+                <p class="error">{{ $message }}</p> 
+               @enderror
                 </div>
 
             <div>
                 <label for="price">価格<span class="required">*</span></label>
-                <input type="number" id="price" name="price" value="{{ old('price', $product->price) }}" required>
-                @if($errors->has('price'))
-                        <p>{{ $errors->first('price') }}</p>
-                    @endif
+                <input type="number" id="price" name="price" value="{{ old('price', $product->price) }}" >
+                @error('price') 
+                  <p class="error">{{ $message }}</p> 
+                @enderror
             </div>
             <div>
                 <label for="stock">在庫数<span class="required">*</span></label>
-                <input type="number" id="stock" name="stock" value="{{ old('stock', $product->stock) }}" required>
-                @if($errors->has('stock'))
-                        <p>{{ $errors->first('stock') }}</p>
-                    @endif
+                <input type="number" id="stock" name="stock" value="{{ old('stock', $product->stock) }}" >
+                @error('stock') 
+                 <p class="error">{{ $message }}</p> 
+                @enderror
             </div>
             <div>
                 <label for="comment">コメント</label>

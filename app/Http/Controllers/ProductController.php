@@ -19,6 +19,13 @@ class ProductController extends Controller
         //return view('regist');
         
     //}
+  //public function showProductListDetail() {
+        // 商品情報詳細画面
+       //$model = new Product();
+       //$products = $model->getList();
+       //return view('productdetail', ['products' => $products]);
+   // }➔下記public function showDetail($id)記載
+
 
     public function showProductInfo() {
         //商品一覧画面
@@ -26,29 +33,28 @@ class ProductController extends Controller
         $products = $model->getList();
         return view('productinfo', ['products' => $products]);
     }
-
-    public function showEditForm() {
-        //商品新規登録画面
-     $companies = \App\Models\Company::all(); // Company モデルから全データ取得
-     return view('newproduct', ['companies' => $companies]);
-    }
-    public function showProductListDetail() {
-        // 商品情報詳細画面
-       $model = new Product();
-       $products = $model->getList();
-       return view('productdetail', ['products' => $products]);
-    }
-    public function showEditForm2($id) {
-        // 商品情報編集画面
-         $product = Product::findOrFail($id);
+  
+// 商品新規登録画面と商品情報編集画面の表示   
+    public function showForm($id = null)
+{
     $companies = Company::all();
-    return view('infoediting', [
-        'product' => $product,
-        'companies' => $companies,
-    ]);
-    }
 
-    
+    if ($id) {
+        // 商品情報編集画面
+        $product = Product::findOrFail($id);
+        return view('infoediting', [
+            'product' => $product,
+            'companies' => $companies
+        ]);
+    } else {
+        // 商品新規登録画面
+        return view('newproduct', [
+            'companies' => $companies
+        ]);
+    }
+}
+
+
     public function registSubmit(ProductRequest $request) {
       
         // トランザクション開始
@@ -76,11 +82,11 @@ class ProductController extends Controller
             DB::commit(); 
     
         // 処理が完了したらregistにリダイレクト
-        return redirect(route('productinfo'));
+         return redirect()->route('product.index')->with('success', '商品を登録しました。');
 
     } catch (\Exception $e) {
         DB::rollback();
-        return back()->withErrors(['error' => '登録に失敗しました: ' . $e->getMessage()]);
+        return redirect()->back()->with('error', '登録に失敗しました: ' . $e->getMessage());
     }
 }
 
