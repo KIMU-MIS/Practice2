@@ -39,7 +39,3 @@ Route::put('/products/{id}', [ProductController::class, 'update'])->name('produc
 Route::get('/products/{id}', [ProductController::class, 'showDetail'])->name('product.show');
 
 
-//Route::get('/list', [App\Http\Controllers\ProductController::class, 'showList'])->name('list');
-//Route::get('/regist',[App\Http\Controllers\ProductController::class, 'showRegistForm'])->name('regist');
-// 商品一覧画面
-//Route::get('/productinfo',[App\Http\Controllers\ProductController::class, 'showProductInfo'])->name('productinfo');

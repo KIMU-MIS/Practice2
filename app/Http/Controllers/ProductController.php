@@ -11,22 +11,8 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
-    //public function showList() {
-        //return view('list');
-    //}
-
-    //public function showRegistForm() {
-        //return view('regist');
-        
-    //}
-  //public function showProductListDetail() {
-        // 商品情報詳細画面
-       //$model = new Product();
-       //$products = $model->getList();
-       //return view('productdetail', ['products' => $products]);
-   // }➔下記public function showDetail($id)記載
-
-
+    
+// 商品一覧画面の表示
     public function showProductInfo() {
         //商品一覧画面
         $model = new Product();
@@ -102,42 +88,44 @@ public function destroy($id)
 
 public function update(Request $request, $id)
 {
-    // バリデーション
-    $request->validate([
-        'product_name' => 'required|string|max:255',
-        'company_id'   => 'required|exists:companies,id',
-        'price'        => 'required|numeric',
-        'stock'        => 'required|integer',
-        'comment'      => 'nullable|string',
-        'img_path'     => 'nullable|image|max:2048', 
-    ]);
 
-    // 該当商品取得
-    $product = Product::findOrFail($id);
+    DB::beginTransaction();
 
-    // データ更新
-    $product->product_name = $request->input('product_name');
-    $product->company_id   = $request->input('company_id');
-    $product->price        = $request->input('price');
-    $product->stock        = $request->input('stock');
-    $product->comment      = $request->input('comment');
-    // 画像アップロードがある場合
-    if ($request->hasFile('img_path')) {
-        // 古い画像があるなら削除
-        if ($product->img_path && Storage::exists('public/' . $product->img_path)) {
-            Storage::delete('public/' . $product->img_path);
+    try {
+        // 該当商品取得
+        $product = Product::findOrFail($id);
+
+        // データ更新
+        $product->product_name = $request->input('product_name');
+        $product->company_id   = $request->input('company_id');
+        $product->price        = $request->input('price');
+        $product->stock        = $request->input('stock');
+        $product->comment      = $request->input('comment');
+
+        // 画像アップロードがある場合
+        if ($request->hasFile('img_path')) {
+            // 古い画像があるなら削除
+            if ($product->img_path && Storage::exists('public/' . $product->img_path)) {
+                Storage::delete('public/' . $product->img_path);
+            }
+
+            // 新しい画像を保存
+            $path = $request->file('img_path')->store('images', 'public');
+            $product->img_path = $path;
         }
 
-        // 新しい画像を保存
-        $path = $request->file('img_path')->store('images', 'public');
-        $product->img_path = $path;
+        $product->save();
+
+        DB::commit();
+
+        return redirect()->route('product.show', $product->id)
+                         ->with('success', '商品情報を更新しました');
+    } catch (\Exception $e) {
+        DB::rollback();
+        return redirect()->back()
+                         ->withInput()
+                         ->with('error', '商品情報の更新に失敗しました: ' . $e->getMessage());
     }
-
-    $product->save();
-
-    // 更新後に詳細ページにリダイレクト
-    return redirect()->route('product.show', $product->id)
-                     ->with('success', '商品情報を更新しました');
 }
 
 public function index(Request $request)

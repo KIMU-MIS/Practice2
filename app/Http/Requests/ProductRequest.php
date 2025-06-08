@@ -49,7 +49,7 @@ class ProductRequest extends FormRequest
    {
     return [
         'product_name' => '商品名',
-        'company_name' => 'メーカー名',
+        'company_id' => 'メーカー名',
         'price' => '価格',
         'stock' => '在庫数',
         'comment' => 'コメント',

@@ -122,7 +122,7 @@
 
             <div>
                 <button type="submit">更新</button>
-                <a href="javascript:history.back();">
+                <a href="{{ route('product.show', ['id' => $product->id]) }}">
                     <button type="button" class="back-btn">戻る</button>
                 </a>
             </div>
