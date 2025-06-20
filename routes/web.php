@@ -23,12 +23,14 @@ Auth::routes();
 
 // 商品一覧画面
 Route::get('/productinfo', [ProductController::class, 'index'])->name('product.index');
+// 商品一覧画面の検索
+Route::post('/products/search', [ProductController::class, 'search'])->name('product.search');
 // 商品新規登録画面
-Route::get('/products/create', [ProductController::class, 'showForm'])->name('product.create');
+Route::get('/products/create', [ProductController::class, 'create'])->name('product.create');
 // 商品情報一覧画面
 Route::get('/productdetail',[App\Http\Controllers\ProductController::class, 'showProductListDetail'])->name('productdetail');
 // 商品情報編集画面
-Route::get('/products/{id}/edit', [ProductController::class, 'showForm'])->name('product.edit');
+Route::get('/products/{id}/edit', [ProductController::class, 'edit'])->name('product.edit');
 // 商品情報登録処理
 Route::post('/regist',[App\Http\Controllers\ProductController::class, 'registSubmit'])->name('button');
 // 商品情報削除処理（DELETE）

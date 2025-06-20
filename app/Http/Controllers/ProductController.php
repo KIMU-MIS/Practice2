@@ -20,26 +20,6 @@ class ProductController extends Controller
         return view('productinfo', ['products' => $products]);
     }
   
-// 商品新規登録画面と商品情報編集画面の表示   
-    public function showForm($id = null)
-{
-    $companies = Company::all();
-
-    if ($id) {
-        // 商品情報編集画面
-        $product = Product::findOrFail($id);
-        return view('infoediting', [
-            'product' => $product,
-            'companies' => $companies
-        ]);
-    } else {
-        // 商品新規登録画面
-        return view('newproduct', [
-            'companies' => $companies
-        ]);
-    }
-}
-
 
     public function registSubmit(ProductRequest $request) {
       
@@ -86,7 +66,7 @@ public function destroy($id)
     }
 }
 
-public function update(Request $request, $id)
+public function update(ProductRequest $request, $id)
 {
 
     DB::beginTransaction();
@@ -128,14 +108,36 @@ public function update(Request $request, $id)
     }
 }
 
-public function index(Request $request)
+public function index(Request $request)//（商品一覧画面の初期表示・通常の画面表示）view('productinfo') を返す
 {
-    $products = Product::searchProducts($request->all());
+    
+     // まず先に sort, direction を定義
+    $sort = $request->input('sort', 'id');
+    $direction = $request->input('direction', 'desc');
+
+    // その後に検索処理に渡す
+    $products = Product::searchProducts($request->all(), $sort, $direction);
     $companies = Company::all();
 
-    return view('productinfo', compact('products', 'companies'));
+  if ($request->ajax()) {
+        return view('partials.product_list', compact('products'));
+    }
+
+    return view('productinfo', compact('products', 'companies', 'sort', 'direction'));
 }
 
+public function search(Request $request)//（商品一覧画面の検索ボタンを押した時）view('partials.product_list') を返して render() でHTML化して返す
+{
+    $products = Product::searchProducts($request->all());
+
+    return view('partials.product_list', compact('products'))->render();
+}
+
+public function create()//（商品新規登録画面の表示用）
+{
+    $companies = Company::all();
+    return view('newproduct', compact('companies'));
+}
 
 public function edit($id)//（商品編集画面の表示用）
 {
@@ -143,7 +145,7 @@ public function edit($id)//（商品編集画面の表示用）
     $product = Product::withCompanyById($id);
     $companies = Company::all();
 
-    return view('edit', compact('product', 'companies'));
+    return view('infoediting', compact('product', 'companies'));
 }
 
 public function showDetail($id)//（商品詳細画面の表示）

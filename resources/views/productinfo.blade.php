@@ -94,6 +94,9 @@
             background-color: #007bff;
             color: white;
         }
+        .sortable {
+            cursor: pointer;
+          }
     </style>
 
 
@@ -114,90 +117,123 @@
     <h2>商品一覧画面</h2> 
     <div class="search-container">
     
-    <form action="{{ route('product.index') }}" method="GET">
+    <form id="search-form">
        <div class="input">
-        <input type="text" id="keyword" name="keyword" value="{{ request('keyword') }}" placeholder="検索キーワード">
+        <input type="text" id="keyword" name="keyword" placeholder="検索キーワード">
        </div>
 
        <div class="select">
           <select name="company_id" id="company_id">
              <option value="">-- メーカー名 --</option>
              @foreach($companies as $company)
-                <option value="{{ $company->id }}" {{ request('company_id') == $company->id ? 'selected' : '' }}>
+                <option value="{{ $company->id }}">
                     {{ $company->company_name }}
                 </option>
              @endforeach
            </select>
         </div>
+        
+        <!-- 価格検索 -->
+          <div class="input">
+            <label>価格:</label>
+            <input type="number" name="price_min" placeholder="下限">
+            <input type="number" name="price_max" placeholder="上限">
+           </div>
 
+        <!-- 在庫検索 -->
+         <div class="input">
+            <label>在庫数:</label>
+            <input type="number" name="stock_min" placeholder="下限">
+            <input type="number" name="stock_max" placeholder="上限">
+         </div>
+
+        <!-- 検索ボタン -->
         <div class="button">
           <button type="submit">検索</button>
         </div>
+       <input type="hidden" name="sort" id="sort" value="{{ $sort ?? 'id' }}">
+       <input type="hidden" name="direction" id="direction" value="{{ $direction ?? 'asc' }}">   
     </form>
     
     </div>
 
     <!-- 商品一覧表 -->
     <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>商品画像</th>
-                    <th>商品名</th>
-                    <th>価格</th>
-                    <th>在庫数</th>
-                    <th>メーカー名</th>
-                    <th><button class="new-btn" onclick="location.href='{{route('product.create') }}'">新規登録</button></th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- 商品一覧を動的に表示 -->
-                @foreach ($products as $product)
-                <tr>
-                    <td>{{ $product->id }}</td>
-                    <td><img src="{{ asset('storage/' . $product->img_path) }}" alt="商品画像" width="80" height="80" /></td>
-                    <td>{{ $product->product_name }}</td>
-                    <td>{{ $product->price }}</td>
-                    <td>{{ $product->stock }}</td>
-                    <td>{{ $product->company_name }}</td>
-                    <td>
-                      <div class="button-container">
-                         <a href="{{ route('product.show', $product->id) }}">
-                          <button class="register-btn">詳細</button>
-                         </a>
-        
-                              <form action="{{ route('product.destroy', $product->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('本当に削除しますか？');">
-                               @csrf
-                               @method('DELETE')
-                              <button type="submit" class="delete-btn">削除</button>
-                              </form>
-                        </div>
-                     </td>
-                </tr>
-                @endforeach
-               
-                <!-- 他の商品行を追加 -->
-            </tbody>
-        </table>
+       <div id="product-list">
+          @include('partials.product_list', ['products' => $products])
+       </div>
     </div>
 
 </div>
-
+@endsection
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+@section('scripts') {{-- layouts.app で @yield('scripts') を呼んでおく --}}
 <script>
-    // 検索ボタンの処理
-    document.getElementById('searchBtn').addEventListener('click', function() {
-        const keyword = document.getElementById('searchKeyword').value;
-        const manufacturer = document.getElementById('manufacturerSelect').value;
+$(document).ready(function () {
+     // 検索機能
+    $('#search-form').on('submit', function (e) {
+        e.preventDefault();
 
-        // 実際の検索処理をここに実装する（例：API呼び出し、テーブルのフィルタリングなど）
-        console.log('検索キーワード:', keyword);
-        console.log('メーカー名:', manufacturer);
-        // 例：商品をフィルタリングして表示
+        $.ajax({
+            url: "{{ route('product.index') }}", // Laravelのルート名で指定
+            type: 'GET',
+            data: $('#search-form').serialize(),
+            success: function (data) {
+                $('#product-list').html(data);
+            },
+            error: function () {
+                alert('検索に失敗しました');
+            }
+        });
     });
 
+    // ソート機能
+    $(document).on('click', '.sortable', function () {
+    const sort = $(this).data('sort');
+    const current = $('#direction').val();
+    const direction = current === 'asc' ? 'desc' : 'asc';
+
     
+    // hidden input の値を変更
+    $('#sort').val(sort);
+    $('#direction').val(direction);
+
+    
+    // データ属性も更新（UI表示用に使うなら）
+    $(this).data('direction', direction);
+
+    // Ajax送信
+    $('#search-form').submit();
+
+  }); 
+
+    //削除ボタンの非同期処理
+    $(document).on('submit', '.delete-form', function (e) {
+    e.preventDefault();
+
+    if (!confirm('本当に削除しますか？')) return;
+
+    const productId = $(this).data('id');
+    const token = $('meta[name="csrf-token"]').attr('content'); // CSRFトークン（必要なら）
+
+    $.ajax({
+        url: '/product/' + productId,
+        type: 'POST',
+        data: {
+            _method: 'DELETE',
+            _token: token
+        },
+        success: function () {
+            // 該当行を削除（エフェクトつけてもOK）
+            $('form[data-id="' + productId + '"]').closest('tr').remove();
+        },
+        error: function () {
+            alert('削除に失敗しました');
+        }
+    });
+   });
+ 
+})
 </script>
-
-
 @endsection
+

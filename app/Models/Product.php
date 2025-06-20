@@ -72,28 +72,62 @@ class Product extends Model
         ->first();
 }  
 
-public static function searchProducts($params)
-{ // 検索条件に基づいて商品を取得
-    $query = self::join('companies', 'products.company_id', '=', 'companies.id')
-        ->select('products.*', 'companies.company_name');
-    // キーワード検索（商品名、コメントなど）
-    if (!empty($params['keyword'])) {
-        $keyword = $params['keyword'];
-        $query->where(function ($q) use ($keyword) {
-            $q->where('products.product_name', 'like', "%{$keyword}%")
-              ->orWhere('products.comment', 'like', "%{$keyword}%");
-            // キーワードが数字の場合、価格・在庫にもマッチ
-            if (is_numeric($keyword)) {
-                $q->orWhere('products.price', '=', $keyword)
-                  ->orWhere('products.stock', '=', $keyword);
+public static function searchProducts(array $filters, $sort = 'products.id', $direction = 'asc')
+{ 
+  
+    // 検索条件に基づいて商品を取得
+    $query = self::with('company');
+
+// キーワード検索（商品名、コメントなど）
+    if (!empty($filters['keyword'])) {
+     $query->where(function ($q) use ($filters) {
+        $keyword = $filters['keyword'];
+
+        // 数字（整数）だけなら price や stock 、品名を完全一致で探す
+        if (ctype_digit($keyword)) {
+            $q->orWhere('price', '=', $keyword)
+              ->orWhere('stock', '=', $keyword);
             }
-        });
+         // 商品名・コメントは部分一致
+        $q->orWhere('product_name', 'like', '%' . $keyword . '%')
+          ->orWhere('comment', 'like', '%' . $keyword . '%');
+    });
+}
+// 会社IDでの絞り込み
+    if (!empty($filters['company_id'])) {
+        $query->where('products.company_id', $filters['company_id']);
     }
-
-    if (!empty($params['company_id'])) {
-        $query->where('products.company_id', $params['company_id']);
+// 価格・在庫の範囲指定
+ // 価格の最小・最大値
+    if (!empty($filters['price_min'])) {
+    $query->where('products.price', '>=', $filters['price_min']);
     }
+    if (!empty($filters['price_max'])) {
+    $query->where('products.price', '<=', $filters['price_max']);
+    }
+ // 在庫の最小・最大値
+    if (!empty($filters['stock_min'])) {
+    $query->where('products.stock', '>=', $filters['stock_min']);
+    }
+    if (!empty($filters['stock_max'])) {
+    $query->where('products.stock', '<=', $filters['stock_max']);
+    }
+// ソート処理
+$sortable = [
+    'id' => 'products.id',
+    'price' => 'products.price',
+    'stock' => 'products.stock',
+];
 
-    return $query->get();
+// $sort が無効なら id にフォールバック
+$sort = $filters['sort'] ?? 'id';
+$direction = $filters['direction'] ?? 'asc';
+$sortColumn = $sortable[$sort] ?? 'products.id';
+
+// ソート実行
+$query->orderBy($sortColumn, $direction);
+ 
+  return $query->get();;
+    
 }
 }
